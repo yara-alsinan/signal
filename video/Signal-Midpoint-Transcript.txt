@@ -3,31 +3,37 @@ Yara Alsinan · MIT 1.125 · November 19, 2026
 Synthetic narration: macOS Samantha. Visuals: slides, actual app screenshots, shortened code excerpts. This is not a live screen recording.
 
 00:00:00–00:00:10 | Introduction: Signal
-This is Signal, Yara Alsinan's individual term project: a research assistant for understanding changes in company financial results.
+This is Signal, Yara Alsinan's individual term project. This midpoint walkthrough shows what works, the engineering decisions, and what still needs improvement.
 
-00:00:10–00:00:40 | Pitch: Company research takes repeated work
-Understanding a company means more than looking at its stock price. People need to compare financial results, find the right reporting periods, and check the evidence behind an explanation. Signal aims to reduce that repeated work. It builds on Stock Sense by investigating the company behind the stock. The current prototype focuses on NVIDIA. Whether people find this useful enough to return remains something to test.
+00:00:10–00:00:30 | Problem and intended value: Understand changes in a company
+Signal helps individuals understand companies by identifying financial changes worth investigating and showing the evidence behind explanations. It builds on Stock Sense, which explored historical stock prices. The proposed value is less repeated research work. Whether users save time or return to the tool still needs testing.
 
-00:00:40–00:01:10 | Technology: Python tools + an existing AI model
-Streamlit turns Python code into the local web interface. Python selects financial facts and calculates changes. The data comes from saved SEC company facts and a historical NVIDIA filing. Claude Haiku four point five, accessed through MIT Parley, selects tools and explains their results. This uses an existing language model; no custom model is trained. Opening the dashboard makes no model request. Clicking Research uses Parley credits.
+00:00:30–00:00:45 | Goal and completed progress: Midpoint goal: one working research flow
+The midpoint goal was one working research flow, rather than broad coverage. That now works: NVIDIA, three questions, Python calculations, retrieved sources, and a Streamlit interface. Live tests confirmed that the model can request both tools through Parley.
 
-00:01:10–00:01:40 | Code · 1 of 2: Code: select comparable observations
-The first important code path is fact selection. This excerpt checks the filing accession, start date, end date, and form, within the requested financial unit. It requires exactly one matching observation. That avoids silently mixing quarterly revenue with six month cash flow. Python then calculates percentage changes and operating margins. The selected periods both contain one hundred eighty two days. Reported rounded earnings per share are explicitly labeled.
+00:00:45–00:01:05 | Technology: Architecture: how the parts connect
+Streamlit collects the question. A Python agent loop calls Claude Haiku four point five through MIT Parley. Claude chooses a read only tool: financial comparison or evidence retrieval. Python runs the tool and returns results to Claude. The interface displays Python facts separately from the AI explanation. No custom language model is trained.
 
-00:01:40–00:02:10 | Code · 2 of 2: Code: a bounded research loop
-The second code path is the agent loop. This shortened excerpt shows the model request and tool dispatch. The model can request the financial comparison or a curated management passage. Tool results are returned to the model as evidence. The loop stops after at most four model requests and six tool calls. Source IDs must have been retrieved before the final answer cites them. This checks references, but does not prove every sentence is supported.
+00:01:05–00:01:20 | Data and current scope: Dataset: a fixed SEC snapshot
+The dataset is saved SEC company facts plus normalized NVIDIA ten Q text, filed August twenty sixth, twenty twenty six. It compares two six month periods ending in July twenty twenty five and twenty twenty six. Evidence retrieval currently covers one curated cash flow passage. This is historical data.
 
-00:02:10–00:02:30 | Demo · 1 of 3: Demo: the working interface
-Here is the working Streamlit interface, captured from the app. Users see summary cards and choose among cash flow, operating profitability, and earnings per share. The snapshot date is visible. This walkthrough uses screenshots of existing results, rather than presenting a new live model request.
+00:01:20–00:01:50 | Implementation · financial tool: Code: match periods, units and filing
+This financial tool selects the requested unit, filing accession, dates, and form. It requires exactly one matching observation before calculating growth. Both periods cover one hundred eighty two days. This guards against comparing quarterly revenue with six month cash flow, or mixing dollars with figures displayed in millions. Python also calculates operating margins and exact share changes. Earnings per share growth uses the filing's reported rounded values.
 
-00:02:30–00:02:50 | Demo · 2 of 3: Demo: inspect the calculated facts
-The facts table is populated directly from Python, independently of AI prose. Revenue grew ninety five point eight percent, while operating cash flow grew seventy four percent. The gap is twenty one point nine percentage points. The table also shows period dates, units, margins, and the exact diluted share decrease.
+00:01:50–00:02:20 | Implementation · agent loop: Code: control the agent and evidence
+The agent loop lets Claude choose between two allowlisted tools. Financial calculations are performed in Python, rather than delegated to model arithmetic. The evidence tool validates a saved passage against the text snapshot's hash and character location. Each question is limited to four model requests and six tool calls. Returned source IDs are checked, but that does not verify every claim. Relevant evidence for margin and earnings drivers is still missing.
 
-00:02:50–00:03:10 | Demo · 3 of 3: Demo: review interpretation and sources
-Below the facts, the app separates the AI explanation from the calculations. This screenshot shows the saved earnings per share answer and its source reference. Expandable source sections expose the retrieved inputs and filing link. For cash flow, the evidence tool returns one curated management passage, not a search of the entire report.
+00:02:20–00:02:38 | Working prototype · 1 of 3: Demo: the local research interface
+These are screenshots from the working app, not a simulated live run. Summary cards show revenue, cash flow, and operating margin. Users choose cash flow, profitability, or earnings per share, then click Research. Opening the page alone makes no AI request; research uses Parley credits.
 
-00:03:10–00:03:35 | Risks: What testing caught
-Testing exposed a real error: the model described a share decrease as twenty three million instead of two hundred thirty three million. Python now supplies the exact difference, and the interface separates facts from interpretation. Ten offline checks pass, but model explanations can still overreach. One company, one historical filing, and one curated passage limit coverage. Live accuracy and usefulness still require evaluation.
+00:02:38–00:02:56 | Working prototype · 2 of 3: Demo: facts calculated in Python
+The facts table displays both periods and units directly from Python. Revenue grew ninety five point eight percent and operating cash flow grew seventy four percent: a twenty one point nine percentage point gap. The exact weighted average diluted share decrease is two hundred thirty three million.
 
-00:03:35–00:04:00 | Next steps: Next: stronger evidence and saved research
-Before the final submission, the priorities are to retrieve more relevant evidence, evaluate the twelve reference tasks, add persistent research history, and implement reliable manual refresh. Broader company coverage and scheduled checks come after the core is reliable. The complete midpoint code, public snapshots, setup instructions, and limitations are on GitHub. Signal already demonstrates a working tool using research workflow; the next goal is making it more dependable.
+00:02:56–00:03:15 | Working prototype · 3 of 3: Demo: interpretation and source review
+The saved earnings per share answer appears below the facts with source references. Expandable sections expose tool inputs and SEC links. The interface labels AI interpretation separately because correct numbers do not guarantee a supported explanation. Management's statement is evidence of what management said, rather than independently established causation.
+
+00:03:15–00:03:40 | Testing and remaining risks: Errors found—and changes made
+Live review caught a share unit error: twenty three million instead of two hundred thirty three million. Python now supplies the exact difference. Unrelated cash flow evidence and unsupported explanations led to narrower instructions and separate fact displays. A crash with an older saved answer was fixed and regression tested. Ten automated checks pass. The separate twelve question evaluation remains unfinished, and interpretation reliability is not yet established.
+
+00:03:40–00:04:00 | Next steps and success criteria: What remains before the final
+The next priorities are relevant evidence retrieval, scoring all twelve reference tasks, persistent research history, and reliable manual refresh. Stock prices, broader company coverage, and daily checks remain later extensions. The final goal is a dependable workflow with checked figures, supported explanations, and clear limitations. The repository contains the code, public data, and setup instructions.

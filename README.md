@@ -10,7 +10,17 @@ Built by Yara Alsinan for MIT 1.125. Midpoint version: November 19, 2026.
 
 [Watch or download the four-minute walkthrough](https://github.com/yara-alsinan/signal/raw/refs/heads/main/video/Signal-Midpoint.mp4) · [Video file](video/Signal-Midpoint.mp4) · [Transcript](video/Signal-Midpoint-Transcript.txt) · [English subtitles](video/Signal-Midpoint.srt)
 
-The walkthrough covers the introduction, pitch, technology, code, working prototype, risks and next steps. It uses disclosed synthetic narration, actual app screenshots and shortened code excerpts; it is not a live screen recording.
+The revised walkthrough separates midpoint goals and completed progress from remaining work. It covers the architecture, historical SEC dataset, code, actual app results, errors found during testing, changes made, and remaining limitations. It uses disclosed synthetic narration, actual app screenshots and shortened code excerpts; it is not a live screen recording.
+
+| Time | Topic |
+| --- | --- |
+| 0:00 | Introduction and problem |
+| 0:30 | Midpoint goal and completed progress |
+| 0:45 | Architecture and dataset scope |
+| 1:20 | Financial tool and agent-loop code |
+| 2:20 | Actual app screenshots and results |
+| 3:15 | Errors, fixes and evaluation status |
+| 3:40 | Remaining work before the final |
 
 ## What works now
 
