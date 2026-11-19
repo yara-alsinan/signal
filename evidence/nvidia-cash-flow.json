@@ -1,0 +1,19 @@
+{
+  "evidence_type": "management_explanation",
+  "company": "NVIDIA",
+  "accession": "0001045810-26-000075",
+  "filing_date": "2026-08-26",
+  "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+  "source_file": "data/nvidia-latest-10q.txt",
+  "source_sha256": "c62f468da4e16606e3b364351484ea3e4d7e8f7c12259061392548f2114330f1",
+  "section": "Management's Discussion and Analysis / Liquidity and Capital Resources",
+  "quote": "Cash provided by operating activities increased in the first half of fiscal year 2027 compared to the first half of fiscal year 2026 due to higher revenue, partially offset by an increase in accounts receivable due to extended payment terms on large multi-quarter agreements with certain investment-grade customers.",
+  "locator": {
+    "kind": "normalized_text_character_offsets",
+    "start": 120069,
+    "end": 120384
+  },
+  "plain_language_paraphrase": "Management attributes the increase in operating cash flow to higher revenue, partly offset by more customer payments remaining outstanding because certain customers received longer payment terms.",
+  "limitation": "This is management's explanation of the cash-flow increase. This passage alone does not quantify each driver's contribution or fully explain the difference between revenue growth and operating cash-flow growth.",
+  "method": "Known-passage extraction; paraphrase written during the guided exercise, not AI-generated at runtime."
+}
