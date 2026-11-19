@@ -1,0 +1,211 @@
+1
+00:00:00,000 --> 00:00:06,331
+This is Signal, Yara Alsinan's individual term project: a research assistant for
+
+2
+00:00:06,331 --> 00:00:09,497
+understanding changes in company financial results.
+
+3
+00:00:10,000 --> 00:00:14,800
+Understanding a company means more than looking at its stock price. People
+
+4
+00:00:14,800 --> 00:00:19,600
+need to compare financial results, find the right reporting periods, and check
+
+5
+00:00:19,600 --> 00:00:24,401
+the evidence behind an explanation. Signal aims to reduce that repeated work.
+
+6
+00:00:24,401 --> 00:00:29,201
+It builds on Stock Sense by investigating the company behind the stock.
+
+7
+00:00:29,201 --> 00:00:34,001
+The current prototype focuses on NVIDIA. Whether people find this useful enough
+
+8
+00:00:34,001 --> 00:00:36,401
+to return remains something to test.
+
+9
+00:00:40,000 --> 00:00:44,912
+Streamlit turns Python code into the local web interface. Python selects financial
+
+10
+00:00:44,912 --> 00:00:49,823
+facts and calculates changes. The data comes from saved SEC company facts
+
+11
+00:00:49,823 --> 00:00:54,735
+and a historical NVIDIA filing. Claude Haiku four point five, accessed through
+
+12
+00:00:54,735 --> 00:00:59,646
+MIT Parley, selects tools and explains their results. This uses an existing
+
+13
+00:00:59,646 --> 00:01:04,558
+language model; no custom model is trained. Opening the dashboard makes no
+
+14
+00:01:04,558 --> 00:01:07,423
+model request. Clicking Research uses Parley credits.
+
+15
+00:01:10,000 --> 00:01:14,741
+The first important code path is fact selection. This excerpt checks the
+
+16
+00:01:14,741 --> 00:01:19,482
+filing accession, start date, end date, and form, within the requested financial
+
+17
+00:01:19,482 --> 00:01:24,223
+unit. It requires exactly one matching observation. That avoids silently mixing quarterly
+
+18
+00:01:24,223 --> 00:01:28,964
+revenue with six month cash flow. Python then calculates percentage changes and
+
+19
+00:01:28,964 --> 00:01:33,705
+operating margins. The selected periods both contain one hundred eighty two days.
+
+20
+00:01:33,705 --> 00:01:36,866
+Reported rounded earnings per share are explicitly labeled.
+
+21
+00:01:40,000 --> 00:01:44,495
+The second code path is the agent loop. This shortened excerpt shows
+
+22
+00:01:44,495 --> 00:01:48,991
+the model request and tool dispatch. The model can request the financial
+
+23
+00:01:48,991 --> 00:01:53,486
+comparison or a curated management passage. Tool results are returned to the
+
+24
+00:01:53,486 --> 00:01:57,982
+model as evidence. The loop stops after at most four model requests
+
+25
+00:01:57,982 --> 00:02:02,477
+and six tool calls. Source IDs must have been retrieved before the
+
+26
+00:02:02,477 --> 00:02:06,972
+final answer cites them. This checks references, but does not prove every
+
+27
+00:02:06,972 --> 00:02:08,096
+sentence is supported.
+
+28
+00:02:10,000 --> 00:02:15,158
+Here is the working Streamlit interface, captured from the app. Users see
+
+29
+00:02:15,158 --> 00:02:20,316
+summary cards and choose among cash flow, operating profitability, and earnings per
+
+30
+00:02:20,316 --> 00:02:25,474
+share. The snapshot date is visible. This walkthrough uses screenshots of existing
+
+31
+00:02:25,474 --> 00:02:29,342
+results, rather than presenting a new live model request.
+
+32
+00:02:30,000 --> 00:02:33,918
+The facts table is populated directly from Python, independently of AI prose.
+
+33
+00:02:33,918 --> 00:02:37,835
+Revenue grew ninety five point eight percent, while operating cash flow grew
+
+34
+00:02:37,835 --> 00:02:41,753
+seventy four percent. The gap is twenty one point nine percentage points.
+
+35
+00:02:41,753 --> 00:02:45,671
+The table also shows period dates, units, margins, and the exact diluted
+
+36
+00:02:45,671 --> 00:02:46,324
+share decrease.
+
+37
+00:02:50,000 --> 00:02:53,675
+Below the facts, the app separates the AI explanation from the calculations.
+
+38
+00:02:53,675 --> 00:02:57,350
+This screenshot shows the saved earnings per share answer and its source
+
+39
+00:02:57,350 --> 00:03:01,025
+reference. Expandable source sections expose the retrieved inputs and filing link. For
+
+40
+00:03:01,025 --> 00:03:04,700
+cash flow, the evidence tool returns one curated management passage, not a
+
+41
+00:03:04,700 --> 00:03:06,231
+search of the entire report.
+
+42
+00:03:10,000 --> 00:03:13,826
+Testing exposed a real error: the model described a share decrease as
+
+43
+00:03:13,826 --> 00:03:17,652
+twenty three million instead of two hundred thirty three million. Python now
+
+44
+00:03:17,652 --> 00:03:21,477
+supplies the exact difference, and the interface separates facts from interpretation. Ten
+
+45
+00:03:21,477 --> 00:03:25,303
+offline checks pass, but model explanations can still overreach. One company, one
+
+46
+00:03:25,303 --> 00:03:29,129
+historical filing, and one curated passage limit coverage. Live accuracy and usefulness
+
+47
+00:03:29,129 --> 00:03:30,085
+still require evaluation.
+
+48
+00:03:35,000 --> 00:03:38,364
+Before the final submission, the priorities are to retrieve more relevant evidence,
+
+49
+00:03:38,364 --> 00:03:41,728
+evaluate the twelve reference tasks, add persistent research history, and implement reliable
+
+50
+00:03:41,728 --> 00:03:45,093
+manual refresh. Broader company coverage and scheduled checks come after the core
+
+51
+00:03:45,093 --> 00:03:48,457
+is reliable. The complete midpoint code, public snapshots, setup instructions, and limitations
+
+52
+00:03:48,457 --> 00:03:51,821
+are on GitHub. Signal already demonstrates a working tool using research workflow;
+
+53
+00:03:51,821 --> 00:03:54,064
+the next goal is making it more dependable.

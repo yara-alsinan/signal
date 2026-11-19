@@ -6,6 +6,12 @@ Signal helps individuals identify financial changes worth investigating and insp
 
 Built by Yara Alsinan for MIT 1.125. Midpoint version: November 19, 2026.
 
+## Midpoint video
+
+[Watch or download the four-minute walkthrough](https://github.com/yara-alsinan/signal/raw/refs/heads/main/video/Signal-Midpoint.mp4) · [Video file](video/Signal-Midpoint.mp4) · [Transcript](video/Signal-Midpoint-Transcript.txt) · [English subtitles](video/Signal-Midpoint.srt)
+
+The walkthrough covers the introduction, pitch, technology, code, working prototype, risks and next steps. It uses disclosed synthetic narration, actual app screenshots and shortened code excerpts; it is not a live screen recording.
+
 ## What works now
 
 - Streamlit interface with financial summary cards and three research questions: cash flow versus revenue, operating profitability, and diluted EPS.

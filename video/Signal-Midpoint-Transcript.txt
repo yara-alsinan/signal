@@ -1,0 +1,33 @@
+SIGNAL — MIDPOINT WALKTHROUGH
+Yara Alsinan · MIT 1.125 · November 19, 2026
+Synthetic narration: macOS Samantha. Visuals: slides, actual app screenshots, shortened code excerpts. This is not a live screen recording.
+
+00:00:00–00:00:10 | Introduction: Signal
+This is Signal, Yara Alsinan's individual term project: a research assistant for understanding changes in company financial results.
+
+00:00:10–00:00:40 | Pitch: Company research takes repeated work
+Understanding a company means more than looking at its stock price. People need to compare financial results, find the right reporting periods, and check the evidence behind an explanation. Signal aims to reduce that repeated work. It builds on Stock Sense by investigating the company behind the stock. The current prototype focuses on NVIDIA. Whether people find this useful enough to return remains something to test.
+
+00:00:40–00:01:10 | Technology: Python tools + an existing AI model
+Streamlit turns Python code into the local web interface. Python selects financial facts and calculates changes. The data comes from saved SEC company facts and a historical NVIDIA filing. Claude Haiku four point five, accessed through MIT Parley, selects tools and explains their results. This uses an existing language model; no custom model is trained. Opening the dashboard makes no model request. Clicking Research uses Parley credits.
+
+00:01:10–00:01:40 | Code · 1 of 2: Code: select comparable observations
+The first important code path is fact selection. This excerpt checks the filing accession, start date, end date, and form, within the requested financial unit. It requires exactly one matching observation. That avoids silently mixing quarterly revenue with six month cash flow. Python then calculates percentage changes and operating margins. The selected periods both contain one hundred eighty two days. Reported rounded earnings per share are explicitly labeled.
+
+00:01:40–00:02:10 | Code · 2 of 2: Code: a bounded research loop
+The second code path is the agent loop. This shortened excerpt shows the model request and tool dispatch. The model can request the financial comparison or a curated management passage. Tool results are returned to the model as evidence. The loop stops after at most four model requests and six tool calls. Source IDs must have been retrieved before the final answer cites them. This checks references, but does not prove every sentence is supported.
+
+00:02:10–00:02:30 | Demo · 1 of 3: Demo: the working interface
+Here is the working Streamlit interface, captured from the app. Users see summary cards and choose among cash flow, operating profitability, and earnings per share. The snapshot date is visible. This walkthrough uses screenshots of existing results, rather than presenting a new live model request.
+
+00:02:30–00:02:50 | Demo · 2 of 3: Demo: inspect the calculated facts
+The facts table is populated directly from Python, independently of AI prose. Revenue grew ninety five point eight percent, while operating cash flow grew seventy four percent. The gap is twenty one point nine percentage points. The table also shows period dates, units, margins, and the exact diluted share decrease.
+
+00:02:50–00:03:10 | Demo · 3 of 3: Demo: review interpretation and sources
+Below the facts, the app separates the AI explanation from the calculations. This screenshot shows the saved earnings per share answer and its source reference. Expandable source sections expose the retrieved inputs and filing link. For cash flow, the evidence tool returns one curated management passage, not a search of the entire report.
+
+00:03:10–00:03:35 | Risks: What testing caught
+Testing exposed a real error: the model described a share decrease as twenty three million instead of two hundred thirty three million. Python now supplies the exact difference, and the interface separates facts from interpretation. Ten offline checks pass, but model explanations can still overreach. One company, one historical filing, and one curated passage limit coverage. Live accuracy and usefulness still require evaluation.
+
+00:03:35–00:04:00 | Next steps: Next: stronger evidence and saved research
+Before the final submission, the priorities are to retrieve more relevant evidence, evaluate the twelve reference tasks, add persistent research history, and implement reliable manual refresh. Broader company coverage and scheduled checks come after the core is reliable. The complete midpoint code, public snapshots, setup instructions, and limitations are on GitHub. Signal already demonstrates a working tool using research workflow; the next goal is making it more dependable.
